@@ -11,22 +11,22 @@ ENV MAKEFLAGS='-j 4'
 ENV LFS_TGT=x86_64-lfs-linux-gnu
 
 
-RUN apt-get update
-RUN apt-get install -y wget build-essential bison gawk m4 texinfo file
-RUN apt-get -y autoremove
-RUN rm -Rf /var/cache/apt
-RUN ln -fsv /bin/bash /bin/sh
+RUN apt-get update &&\
+    apt-get install -q -y wget build-essential bison gawk m4 texinfo file &&\
+    apt-get -q -y autoremove &&\
+    rm -Rf /var/cache/apt &&\
+    ln -fsv /bin/bash /bin/sh
 
-RUN mkdir -p $LFS $LFS/tools $LFS/sources
-RUN chmod -v a+wt $LFS/sources
-RUN ln -sv $LFS/tools /
+RUN mkdir -p $LFS $LFS/tools $LFS/sources &&\
+    chmod -v a+wt $LFS/sources &&\
+    ln -sv $LFS/tools /
 
 WORKDIR $LFS/sources
 
-RUN wget --progress=dot http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/wget-list
-RUN wget --progress=dot http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/md5sums
-RUN wget --input-file=wget-list --continue --progress=dot --directory-prefix=$LFS/sources
-RUN pushd $LFS/sources && \
+RUN wget --progress=dot http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/wget-list &&\
+    wget --progress=dot http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/md5sums &&\
+    wget --input-file=wget-list --continue --progress=dot --directory-prefix=$LFS/sources &&\
+    pushd $LFS/sources && \
     md5sum -c md5sums && \
     popd
 
