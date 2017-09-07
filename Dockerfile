@@ -9,7 +9,7 @@ ENV LFS=/mnt/lfs
 ENV LC_ALL=POSIX
 ENV PATH=/tools/bin:/bin:/usr/bin
 ENV MAKEFLAGS='-j 4'
-ENV LFS_TGT=$(uname -m)-lfs-linux-gnu
+ENV LFS_TGT=x86_64-lfs-linux-gnu
 
 RUN echo $PATH
 RUN apt-get update
