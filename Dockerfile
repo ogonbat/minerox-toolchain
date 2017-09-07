@@ -67,7 +67,7 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
         touch $file.orig \
     done &&\
     case $(uname -m) in \
-    x86_64)
+    x86_64) \
         sed -e '/m64=/s/lib64/lib/' \
             -i.orig gcc/config/i386/t-linux64 \
         ;; \
