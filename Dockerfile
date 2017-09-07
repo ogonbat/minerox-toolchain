@@ -7,7 +7,6 @@ ENV	MRX_VERSION=0.0.1
 ENV LFS_VERSION=8.1
 ENV LFS=/mnt/lfs
 ENV LC_ALL=POSIX
-ENV PATH=/tools/bin:/bin:/usr/bin
 ENV MAKEFLAGS='-j 4'
 ENV LFS_TGT=x86_64-lfs-linux-gnu
 
@@ -27,3 +26,6 @@ RUN wget http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/wget-list
 RUN wget http://www.linuxfromscratch.org/lfs/view/${LFS_VERSION}/md5sums
 RUN aria2c -i ${LFS}/sources/wget-list -d ${LFS}/sources --check-certificate=false
 RUN md5sum -c md5sums
+
+
+ENV PATH=/tools/bin:/bin:/usr/bin
