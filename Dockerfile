@@ -198,45 +198,45 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
         rm -Rf gmp &&\
         rm -Rf mpc
 
-#RUN tar -xf tcl-core8.6.7-src.tar.gz &&\
-#    pushd $LFS/sources/tcl8.6.7 &&\
-#    cd unix &&\
-#    ./configure --prefix=/tools &&\
-#    make &&\
-#    make install &&\
-#    chmod -v u+w /tools/lib/libtcl8.6.so &&\
-#    make install-private-headers &&\
-#    ln -sv tclsh8.6 /tools/bin/tclsh &&\
-#    popd &&\
-#    rm -Rf tcl8.6.7
-#
-#RUN tar -xf expect5.45.tar.gz &&\
-#    pushd $LFS/sources/expect5.45 &&\
-#    cp -v configure{,.orig} &&\
-#    sed 's:/usr/local/bin:/bin:' configure.orig > configure &&\
-#    ./configure --prefix=/tools   \
-#            --with-tcl=/tools/lib \
-#            --with-tclinclude=/tools/include &&\
-#    make &&\
-#    make SCRIPTS="" install &&\
-#    popd &&\
-#    rm -Rf expect5.45
-#
-#RUN tar -xf dejagnu-1.6.tar.gz &&\
-#    pushd $LFS/sources/dejagnu-1.6 &&\
-#    ./configure --prefix=/tools &&\
-#    make &&\
-#    make install &&\
-#    popd &&\
-#    rm -Rf dejagnu-1.6
-#
-#RUN tar -xf check-0.11.0.tar.gz &&\
-#    pushd $LFS/sources/check-0.11.0 &&\
-#    PKG_CONFIG= ./configure --prefix=/tools &&\
-#    make &&\
-#    make install &&\
-#    popd &&\
-#    rm -Rf check-0.11.0
+RUN tar -xf tcl-core8.6.7-src.tar.gz &&\
+    pushd $LFS/sources/tcl8.6.7 &&\
+    cd unix &&\
+    ./configure --prefix=/tools &&\
+    make &&\
+    make install &&\
+    chmod -v u+w /tools/lib/libtcl8.6.so &&\
+    make install-private-headers &&\
+    ln -sv tclsh8.6 /tools/bin/tclsh &&\
+    popd &&\
+    rm -Rf tcl8.6.7
+
+RUN tar -xf expect5.45.tar.gz &&\
+    pushd $LFS/sources/expect5.45 &&\
+    cp -v configure{,.orig} &&\
+    sed 's:/usr/local/bin:/bin:' configure.orig > configure &&\
+    ./configure --prefix=/tools   \
+            --with-tcl=/tools/lib \
+            --with-tclinclude=/tools/include &&\
+    make &&\
+    make SCRIPTS="" install &&\
+    popd &&\
+    rm -Rf expect5.45
+
+RUN tar -xf dejagnu-1.6.tar.gz &&\
+    pushd $LFS/sources/dejagnu-1.6 &&\
+    ./configure --prefix=/tools &&\
+    make &&\
+    make install &&\
+    popd &&\
+    rm -Rf dejagnu-1.6
+
+RUN tar -xf check-0.11.0.tar.gz &&\
+    pushd $LFS/sources/check-0.11.0 &&\
+    PKG_CONFIG= ./configure --prefix=/tools &&\
+    make &&\
+    make install &&\
+    popd &&\
+    rm -Rf check-0.11.0
 
 RUN tar -xf ncurses-6.0.tar.gz &&\
     pushd $LFS/sources/ncurses-6.0 &&\
