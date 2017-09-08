@@ -37,7 +37,7 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/bin
 
 #install binutils
 RUN tar -xf binutils-2.29.tar.bz2 && \
-    cd binutils-2.29 && \
+    pushd $LFS/sources/binutils-2.29 && \
     mkdir -v build && \
     cd       build && \
     ../configure --prefix=/tools --with-sysroot=$LFS --with-lib-path=/tools/lib --target=$LFS_TGT --disable-nls --disable-werror && \
@@ -46,14 +46,14 @@ RUN tar -xf binutils-2.29.tar.bz2 && \
         x86_64) mkdir -v /tools/lib && ln -sv lib /tools/lib64 ;; \
     esac && \
     make install && \
-    cd $LFS/sources && \
+    popd && \
     rm -Rf binutils-2.29
 
 #install gcc
 COPY [ "scripts/toolchain/gcc.sh", "$LFS/sources/" ]
 RUN chmod -R 755 gcc.sh
 RUN tar -xf gcc-7.2.0.tar.xz &&\
-    cd gcc-7.2.0 &&\
+    pushd $LFS/sources/gcc-7.2.0 &&\
     mv -v ../gcc.sh . &&\
     tar -xf ../mpfr-3.1.5.tar.xz &&\
     mv -v mpfr-3.1.5 mpfr &&\
@@ -88,7 +88,7 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
         --enable-languages=c,c++ &&\
         make &&\
         make install &&\
-        cd $LFS/sources &&\
+        popd &&\
         rm -Rf gcc-7.2.0 &&\
         rm -Rf mpfr &&\
         rm -Rf gmp &&\
@@ -96,16 +96,16 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
 
 #install linux
 RUN tar -xf linux-4.12.7.tar.xz &&\
-    cd linux-4.12.7 &&\
+    pushd $LFS/sources/linux-4.12.7 &&\
     make mrproper &&\
     make INSTALL_HDR_PATH=dest headers_install &&\
     cp -rv dest/include/* /tools/include &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf linux-4.12.7
 
 #install glibc
 RUN tar -xf glibc-2.26.tar.xz &&\
-    cd glibc-2.26 &&\
+    pushd $LFS/sources/glibc-2.26 &&\
     mkdir -v build &&\
     cd       build &&\
     ../configure                             \
@@ -118,12 +118,12 @@ RUN tar -xf glibc-2.26.tar.xz &&\
         libc_cv_c_cleanup=yes &&\
         make &&\
         make install &&\
-        cd $LFS/sources &&\
+        popd &&\
         rm -Rf glibc-2.26
 
 #install libstdc
 RUN tar -xf gcc-7.2.0.tar.xz &&\
-    cd gcc-7.2.0 &&\
+    pushd $LFS/sources/gcc-7.2.0 &&\
     mkdir -v build &&\
     cd       build &&\
     ../libstdc++-v3/configure           \
@@ -136,12 +136,12 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
         --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/7.2.0 &&\
         make &&\
         make install &&\
-        cd $LFS/sources &&\
+        popd &&\
         rm -Rf gcc-7.2.0
 
 #install binutils second step
 RUN tar -xf binutils-2.29.tar.bz2 &&\
-    cd binutils-2.29 &&\
+    pushd $LFS/sources/binutils-2.29 &&\
     mkdir -v build &&\
     cd       build &&\
     CC=$LFS_TGT-gcc                \
@@ -158,14 +158,14 @@ RUN tar -xf binutils-2.29.tar.bz2 &&\
         make -C ld clean &&\
         make -C ld LIB_PATH=/usr/lib:/lib &&\
         cp -v ld/ld-new /tools/bin &&\
-        cd $LFS/sources &&\
+        popd &&\
         rm -Rf binutils-2.29
 
 #install gcc second step
 COPY [ "scripts/toolchain/gcc_2.sh", "$LFS/sources/" ]
 RUN chmod -R 755 gcc_2.sh
 RUN tar -xf gcc-7.2.0.tar.xz &&\
-    cd gcc-7.2.0 &&\
+    pushd $LFS/sources/gcc-7.2.0 &&\
     mv ../gcc_2.sh . &&\
     ./gcc_2.sh &&\
     tar -xf ../mpfr-3.1.5.tar.xz &&\
@@ -192,14 +192,14 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
         make &&\
         make install &&\
         ln -sv gcc /tools/bin/cc &&\
-        cd $LFS/sources &&\
+        popd &&\
         rm -Rf gcc-7.2.0 &&\
         rm -Rf mpfr &&\
         rm -Rf gmp &&\
         rm -Rf mpc
 
 #RUN tar -xf tcl-core8.6.7-src.tar.gz &&\
-#    cd tcl8.6.7 &&\
+#    pushd $LFS/sources/tcl8.6.7 &&\
 #    cd unix &&\
 #    ./configure --prefix=/tools &&\
 #    make &&\
@@ -207,11 +207,11 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
 #    chmod -v u+w /tools/lib/libtcl8.6.so &&\
 #    make install-private-headers &&\
 #    ln -sv tclsh8.6 /tools/bin/tclsh &&\
-#    cd $LFS/sources &&\
+#    popd &&\
 #    rm -Rf tcl8.6.7
 #
 #RUN tar -xf expect5.45.tar.gz &&\
-#    cd expect5.45 &&\
+#    pushd $LFS/sources/expect5.45 &&\
 #    cp -v configure{,.orig} &&\
 #    sed 's:/usr/local/bin:/bin:' configure.orig > configure &&\
 #    ./configure --prefix=/tools   \
@@ -219,27 +219,27 @@ RUN tar -xf gcc-7.2.0.tar.xz &&\
 #            --with-tclinclude=/tools/include &&\
 #    make &&\
 #    make SCRIPTS="" install &&\
-#    cd $LFS/sources &&\
+#    popd &&\
 #    rm -Rf expect5.45
 #
 #RUN tar -xf dejagnu-1.6.tar.gz &&\
-#    cd dejagnu-1.6 &&\
+#    pushd $LFS/sources/dejagnu-1.6 &&\
 #    ./configure --prefix=/tools &&\
 #    make &&\
 #    make install &&\
-#    cd $LFS/sources &&\
+#    popd &&\
 #    rm -Rf dejagnu-1.6
 #
 #RUN tar -xf check-0.11.0.tar.gz &&\
-#    cd check-0.11.0 &&\
+#    pushd $LFS/sources/check-0.11.0 &&\
 #    PKG_CONFIG= ./configure --prefix=/tools &&\
 #    make &&\
 #    make install &&\
-#    cd $LFS/sources &&\
+#    popd &&\
 #    rm -Rf check-0.11.0
 
 RUN tar -xf ncurses-6.0.tar.gz &&\
-    cd ncurses-6.0 &&\
+    pushd $LFS/sources/ncurses-6.0 &&\
     sed -i s/mawk// configure &&\
     ./configure --prefix=/tools \
             --with-shared   \
@@ -249,74 +249,74 @@ RUN tar -xf ncurses-6.0.tar.gz &&\
             --enable-overwrite &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf ncurses-6.0
 
 RUN tar -xf bash-4.4.tar.gz &&\
-    cd bash-4.4 &&\
+    pushd $LFS/sources/bash-4.4 &&\
     ./configure --prefix=/tools --without-bash-malloc &&\
     make &&\
     make install &&\
     ln -sv bash /tools/bin/sh &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf bash-4.4
 
 RUN tar -xf bison-3.0.4.tar.xz &&\
-    cd bison-3.0.4 &&\
+    pushd $LFS/sources/bison-3.0.4 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf bison-3.0.4
 
 RUN tar -xf bzip2-1.0.6.tar.gz &&\
-    cd bzip2-1.0.6 &&\
+    pushd $LFS/sources/bzip2-1.0.6 &&\
     make PREFIX=/tools install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf bzip2-1.0.6
 
 RUN tar -xf coreutils-8.27.tar.xz &&\
-    cd coreutils-8.27 &&\
+    pushd $LFS/sources/coreutils-8.27 &&\
     FORCE_UNSAFE_CONFIGURE=1  ./configure --prefix=/tools --enable-install-program=hostname &&\
     FORCE_UNSAFE_CONFIGURE=1 make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf coreutils-8.27
 
 RUN tar -xf diffutils-3.6.tar.xz &&\
-    cd diffutils-3.6 &&\
+    pushd $LFS/sources/diffutils-3.6 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf diffutils-3.6
 
 RUN tar -xf file-5.31.tar.gz &&\
-    cd file-5.31 &&\
+    pushd $LFS/sources/file-5.31 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf file-5.31
 
 RUN tar -xf findutils-4.6.0.tar.gz &&\
-    cd findutils-4.6.0 &&\
+    pushd $LFS/sources/findutils-4.6.0 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf findutils-4.6.0
 
 RUN tar -xf gawk-4.1.4.tar.xz &&\
-    cd gawk-4.1.4 &&\
+    pushd $LFS/sources/gawk-4.1.4 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf gawk-4.1.4
 
 RUN tar -xf gettext-0.19.8.1.tar.xz &&\
-    cd gettext-0.19.8.1 &&\
+    pushd $LFS/sources/gettext-0.19.8.1 &&\
     cd gettext-tools &&\
     EMACS="no" ./configure --prefix=/tools --disable-shared &&\
     make -C gnulib-lib &&\
@@ -325,51 +325,51 @@ RUN tar -xf gettext-0.19.8.1.tar.xz &&\
     make -C src msgmerge &&\
     make -C src xgettext &&\
     cp -v src/{msgfmt,msgmerge,xgettext} /tools/bin &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf gettext-0.19.8.1
 
 RUN tar -xf grep-3.1.tar.xz &&\
-    cd grep-3.1 &&\
+    pushd $LFS/sources/grep-3.1 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf grep-3.1
 
 RUN tar -xf gzip-1.8.tar.xz &&\
-    cd gzip-1.8 &&\
+    pushd $LFS/sources/gzip-1.8 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf gzip-1.8
 
 RUN tar -xf m4-1.4.18.tar.xz &&\
-    cd m4-1.4.18 &&\
+    pushd $LFS/sources/m4-1.4.18 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf m4-1.4.18
 
 RUN tar -xf make-4.2.1.tar.bz2 &&\
-    cd make-4.2.1 &&\
+    pushd $LFS/sources/make-4.2.1 &&\
     ./configure --prefix=/tools --without-guile &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf make-4.2.1
 
 RUN tar -xf patch-2.7.5.tar.xz &&\
-    cd patch-2.7.5 &&\
+    pushd $LFS/sources/patch-2.7.5 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf patch-2.7.5
 
 RUN tar -xf perl-5.26.0.tar.xz &&\
-    cd perl-5.26.0 &&\
+    pushd $LFS/sources/perl-5.26.0 &&\
     sed -e '9751 a#ifndef PERL_IN_XSUB_RE' \
         -e '9808 a#endif'                  \
         -i regexec.c &&\
@@ -378,35 +378,35 @@ RUN tar -xf perl-5.26.0.tar.xz &&\
     cp -v perl cpan/podlators/scripts/pod2man /tools/bin &&\
     mkdir -pv /tools/lib/perl5/5.26.0 &&\
     cp -Rv lib/* /tools/lib/perl5/5.26.0 &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf perl-5.26.0
 
 RUN tar -xf sed-4.4.tar.xz &&\
-    cd sed-4.4 &&\
+    pushd $LFS/sources/sed-4.4 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf sed-4.4
 
 RUN tar -xf tar-1.29.tar.xz &&\
-    cd tar-1.29 &&\
+    pushd $LFS/sources/tar-1.29 &&\
     FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf tar-1.29
 
 RUN tar -xf texinfo-6.4.tar.xz &&\
-    cd texinfo-6.4 &&\
+    pushd $LFS/sources/texinfo-6.4 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf texinfo-6.4
 
 RUN tar -xf util-linux-2.30.1.tar.xz &&\
-    cd util-linux-2.30.1 &&\
+    pushd $LFS/sources/util-linux-2.30.1 &&\
     ./configure --prefix=/tools                \
                 --without-python               \
                 --disable-makeinstall-chown    \
@@ -415,15 +415,15 @@ RUN tar -xf util-linux-2.30.1.tar.xz &&\
                 PKG_CONFIG="" &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf util-linux-2.30.1
 
 RUN tar -xf xz-5.2.3.tar.xz &&\
-    cd xz-5.2.3 &&\
+    pushd $LFS/sources/xz-5.2.3 &&\
     ./configure --prefix=/tools &&\
     make &&\
     make install &&\
-    cd $LFS/sources &&\
+    popd &&\
     rm -Rf xz-5.2.3
 
 RUN strip --strip-debug /tools/lib/* &&\
