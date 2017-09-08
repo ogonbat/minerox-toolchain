@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 for file in gcc/config/{linux,i386/linux{,64}}.h
 do
