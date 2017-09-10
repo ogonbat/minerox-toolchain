@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:8
 
 MAINTAINER cingusoft@gmail.com
 
