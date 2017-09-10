@@ -51,8 +51,8 @@ RUN tar -xf binutils-2.29.tar.bz2 && \
 
 #install gcc
 COPY [ "scripts/toolchain/gcc.sh", "$LFS/sources/" ]
-RUN chmod -R 755 gcc.sh
-RUN tar -xf gcc-7.2.0.tar.xz &&\
+RUN chmod -R 755 gcc.sh &&\
+    tar -xf gcc-7.2.0.tar.xz &&\
     pushd $LFS/sources/gcc-7.2.0 &&\
     mv -v ../gcc.sh . &&\
     tar -xf ../mpfr-3.1.5.tar.xz &&\
@@ -163,8 +163,8 @@ RUN tar -xf binutils-2.29.tar.bz2 &&\
 
 #install gcc second step
 COPY [ "scripts/toolchain/gcc_2.sh", "$LFS/sources/" ]
-RUN chmod -R 755 gcc_2.sh
-RUN tar -xf gcc-7.2.0.tar.xz &&\
+RUN chmod -R 755 gcc_2.sh &&\
+    tar -xf gcc-7.2.0.tar.xz &&\
     pushd $LFS/sources/gcc-7.2.0 &&\
     mv ../gcc_2.sh . &&\
     ./gcc_2.sh &&\
